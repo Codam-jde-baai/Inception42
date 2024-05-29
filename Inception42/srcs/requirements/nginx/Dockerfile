@@ -37,7 +37,7 @@ COPY ./conf/default.conf /etc/nginx/conf.d/default.conf
 
 ## difference between RUN and CMD
 
-CMD ["nginx", "-g", "-c", "/etc/nginx/conf.d/default.conf", "daemon off;"]
+CMD ["nginx", "-g", "daemon off;", "-c", "/etc/nginx/nginx.conf"]
 
 ## nginx : nginx command
 ## -g : set globally
