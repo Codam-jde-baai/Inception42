@@ -118,3 +118,6 @@
 // NGINX
 
 ### 1. 
+
+get logs during runtime (server booted but isnt loading webpage):
+docker logs 
