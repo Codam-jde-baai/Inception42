@@ -31,7 +31,7 @@ RUN openssl req -x509 -nodes -newkey rsa:2048 \
 ## CN : common name
 
 
-COPY ./conf/custom.conf /etc/nginx/conf.d/default.conf
+COPY ./conf/custom.conf /etc/nginx/conf.d/http.conf
 ## nginx will by default use the config file in conf.d (conf.d dir is created by the COPY)
 
 
