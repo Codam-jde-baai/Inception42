@@ -9,9 +9,10 @@ services:
     restart: unless-stopped
     env_file:
       - .env
-
-#    ports:
-#      - "443:443"
+    ports:
+      - "443:443"
+    volumes:
+      - ./requirements/nginx/conf:/etc/nginx/conf.d
 
 #context is the path to the dockerfile
 #dockerfile is the name of the dockerfile

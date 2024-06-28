@@ -10,7 +10,7 @@ RUN apk update && apk add --no-cache nginx openssl
 ## nginx : nginx installation
 ## openssl : openssl installation
 
-## making a new ssl key
+## making a new ssl keyl
 RUN openssl req -x509 -nodes -newkey rsa:2048 \
 	-keyout /etc/ssl/private/${DOMAIN_NAME}.key \
 	-out /etc/ssl/certs/${DOMAIN_NAME}.crt \
@@ -21,7 +21,7 @@ RUN openssl req -x509 -nodes -newkey rsa:2048 \
 ## -nodes : no DES encryption, private key is not pw protected
 ## -newkey : new key
 ## -rsa:2048 : 2048 bit RSA key
-## -keyout : key output
+## -keyout : key outputl
 ## -out : output certificate
 ## -subj : general info for the certificate
 ## C : country
@@ -33,6 +33,10 @@ RUN openssl req -x509 -nodes -newkey rsa:2048 \
 
 COPY ./conf/custom.conf /etc/nginx/conf.d/default.conf
 ## nginx will by default use the config file in conf.d (conf.d dir is created by the COPY)
+
+
+
+EXPOSE 443
 
 
 ## difference between RUN and CMD
