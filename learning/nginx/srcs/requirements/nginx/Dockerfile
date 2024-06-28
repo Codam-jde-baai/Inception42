@@ -1,7 +1,8 @@
 FROM alpine:3.19
+##FROM is the base image
 
-##get the ARG:  DOMAIN_NAME from docker-compose
 ARG DOMAIN_NAME
+##get the ARG:  DOMAIN_NAME from docker-compose
 
 RUN apk update && apk add --no-cache nginx openssl
 ## apk update : general update
@@ -30,11 +31,13 @@ RUN openssl req -x509 -nodes -newkey rsa:2048 \
 ## CN : common name
 
 
-COPY ./conf/default.conf /etc/nginx/conf.d/default.conf
+COPY ./conf/custom.conf /etc/nginx/conf.d/default.conf
 ## nginx will by default use the config file in conf.d (conf.d dir is created by the COPY)
 
 
 ## difference between RUN and CMD
+# RUN is used to run the command in the docker image
+# CMD is used to set the default command for the docker container
 
 CMD ["nginx", "-g", "daemon off;"]
 

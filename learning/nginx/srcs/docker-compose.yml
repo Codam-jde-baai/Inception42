@@ -9,5 +9,14 @@ services:
     restart: unless-stopped
     env_file:
       - .env
-    ports:
-      - "443:443"
+
+#    ports:
+#      - "443:443"
+
+#context is the path to the dockerfile
+#dockerfile is the name of the dockerfile
+#args is the environment variables, ARGS are passed to the dockerfile before running the dockerfile
+#container_name is the name of the container
+#restart is the restart policy
+#env_file is the path to the environment variables, environment variables are avaialble to the docker container after building
+#ports is the ports to expose
