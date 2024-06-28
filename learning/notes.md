@@ -121,3 +121,5 @@
 
 get logs during runtime (server booted but isnt loading webpage):
 docker logs 
+
+https://www.plesk.com/blog/various/nginx-configuration-guide/

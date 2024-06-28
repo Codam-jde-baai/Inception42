@@ -7,7 +7,7 @@ ARG DOMAIN_NAME
 RUN apk update && apk add --no-cache nginx openssl
 ## apk update : general update
 ##  --no-cache : prevents caching the index locally, saving storage
-## nginx : nginx installation
+## nginx : nginx installationl
 ## openssl : openssl installation
 
 ## making a new ssl keyl
@@ -31,7 +31,7 @@ RUN openssl req -x509 -nodes -newkey rsa:2048 \
 ## CN : common name
 
 
-COPY ./conf/custom.conf /etc/nginx/conf.d/http.conf
+COPY ./conf/custom.conf /etc/nginx/conf.d/jde-baai.42.fr.conf
 ## nginx will by default use the config file in conf.d (conf.d dir is created by the COPY)
 
 
