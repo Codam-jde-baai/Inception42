@@ -1,12 +1,13 @@
-FROM alpine:3.19
+FROM debian:11
 ##FROM is the base image
 
 ARG DOMAIN_NAME
 ##get the ARG:  DOMAIN_NAME from docker-compose
 
-RUN apk update && apk add --no-cache nginx openssl
-## apk update : general update
-##  --no-cache : prevents caching the index locally, saving storage
+RUN apt-get update && apt-get install -y nginx openssl
+## apt-get update : general update
+## apt-get install -y : install the package
+## -y : assume yes to all prompts
 ## nginx : nginx installationl
 ## openssl : openssl installation
 
