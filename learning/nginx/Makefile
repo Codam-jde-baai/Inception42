@@ -2,11 +2,20 @@ DOCKER_COMPOSE = ./srcs/docker-compose.yml
 
 all: up
 
+debian:
+	docker pull image debian
+
 up:
 	docker-compose -f $(DOCKER_COMPOSE) up -d
 
 down:
 	docker-compose -f $(DOCKER_COMPOSE) down
+
+testclean: down
+	docker container prune -f
+	docker network prune -f
+	docker volume prune -f
+	docker image prune -af --filter "label!=debian:11"
 
 clean: down
 	docker system prune -af
@@ -23,6 +32,6 @@ fclean: clean
 
 re: fclean all
 
-.PHONY: all up down clean fclean re status
+.PHONY: all up down clean fclean re status debian testclean
 
 
