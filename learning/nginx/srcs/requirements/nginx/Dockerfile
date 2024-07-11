@@ -32,11 +32,11 @@ RUN openssl req -x509 -nodes -newkey rsa:2048 \
 ## CN : common name
 
 
-COPY ./conf/custom.conf /etc/nginx/conf.d/jde-baai.42.fr.conf
+COPY ./conf/custom.conf /etc/nginx/conf.d/custom.conf.template
 ## nginx will by default use the config file in conf.d (conf.d dir is created by the COPY)
 
 
-RUN envsubst '${DOMAIN_NAME}' < /etc/nginx/conf.d/custom.conf > /etc/nginx/conf.d/default.conf
+RUN envsubst '${DOMAIN_NAME}' < /etc/nginx/conf.d/custom.conf.template > /etc/nginx/conf.d/${DOMAIN_NAME}.conf
 
 
 EXPOSE 443
