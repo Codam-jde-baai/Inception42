@@ -1,0 +1,68 @@
+services:
+
+  # mariadb:
+  #   build:
+  #     context: requirements/mariadb
+  #     args:
+  #       MYSQL_DATABASE : ${MYSQL_DATABASE}
+  #       MYSQL_USER : $MYSQL_USER
+  #       MYSQL_PASSWORD : $MYSQL_PASSWORD
+  #       MYSQL_ROOT_PASSWORD : $MYSQL_ROOT_PASSWORD
+  #   container_name: mariadb
+  #   image: mariadb
+  #   restart: unless-stopped
+  #   env_file:
+  #     - .env
+  #   volumes:
+  #     - db:/var/lib/mysql 
+  #   networks:
+  #     - test  
+
+  nginx:
+    build: requirements/nginx
+    container_name: nginx
+    image: nginx
+    restart: unless-stopped
+    env_file:
+      - .env
+    ports:
+      - "80:80"
+
+#   wordpress:
+#     build:
+#       context: requirements/wordpress
+#       args:
+#         MYSQL_DATABASE : "${MYSQL_DATABASE}"
+#         MYSQL_USER : "${MYSQL_USER}"
+#         MYSQL_PASSWORD : "${MYSQL_PASSWORD}"
+#         MYSQL_HOST : "${MYSQL_HOST}"
+#     container_name: wordpress
+#     image: wordpress
+#     depends_on:
+#       - mariadb
+#     restart: unless-stopped
+#     env_file:
+#       - .env
+#     volumes:
+#       - wp:/var/www/html
+#     networks:
+#       - test 
+
+# volumes:
+#  wp:
+#   driver: local #volume is located locally
+#   driver_opts:
+#     o: bind #binding the volume
+#     type: none #setting the type of volume
+#     device: ${HOME}/codam_project/inception/wp
+
+#  db:
+#   driver: local #volume is located locally
+#   driver_opts:
+#     o: bind #binding the volume
+#     type: none #setting the type of volume
+#     device: ${HOME}/codam_project/inception/db
+# networks:
+#   test:
+#     name: test
+#     external: false  
