@@ -36,6 +36,8 @@ COPY ./conf/custom.conf /etc/nginx/conf.d/jde-baai.42.fr.conf
 ## nginx will by default use the config file in conf.d (conf.d dir is created by the COPY)
 
 
+RUN envsubst '${DOMAIN_NAME}' < /etc/nginx/conf.d/custom.conf > /etc/nginx/conf.d/default.conf
+
 
 EXPOSE 443
 
