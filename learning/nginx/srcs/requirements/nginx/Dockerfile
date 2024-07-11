@@ -2,8 +2,6 @@ FROM debian:11
 ##FROM is the base image
 
 ARG DOMAIN_NAME
-ENV DOMAIN_NAME=${DOMAIN_NAME}  
-## Export ARG as ENV
 ##get the ARG:  DOMAIN_NAME from docker-compose
 
 RUN apt-get update && apt-get install -y nginx openssl
