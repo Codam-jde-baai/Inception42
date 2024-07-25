@@ -1,9 +1,6 @@
 FROM debian:11
 ##FROM is the base image
 
-ARG DOMAIN_NAME
-##get the ARG:  DOMAIN_NAME from docker-compose
-
 RUN apt-get update && apt-get install -y nginx openssl
 ## apt-get update : general update
 ## apt-get install -y : install the package
@@ -32,7 +29,7 @@ RUN openssl req -x509 -nodes -newkey rsa:2048 \
 ## CN : common name
 
 
-COPY ./conf/custom.conf /etc/nginx/conf.d/custom.conf.template
+COPY ./conf/custom.conf /etc/nginx/conf.d/default.conf
 ## nginx will by default use the config file in conf.d (conf.d dir is created by the COPY)
 
 
