@@ -1,7 +1,7 @@
 FROM debian:11
 ##FROM is the base image
 
-RUN apt-get update && apt-get install -y nginx openssl
+RUN apt-get update && apt-get install -y openssl nginx
 ## apt-get update : general update
 ## apt-get install -y : install the package
 ## -y : assume yes to all prompts
@@ -9,10 +9,9 @@ RUN apt-get update && apt-get install -y nginx openssl
 ## openssl : openssl installation
 
 ## making a new ssl keyl
-RUN openssl req -x509 -nodes -newkey rsa:2048 \
-	-keyout /etc/ssl/private/${DOMAIN_NAME}.key \
-	-out /etc/ssl/certs/${DOMAIN_NAME}.crt \
-	-subj "/C=NL/L=NL/O=CODAM/OU=student/CN=${DOMAIN_NAME}"
+RUN openssl req -x509 -newkey rsa:2048 -nodes \
+	-out /etc/nginx/cert.pem \
+        -keyout /etc/nginx/key.pem -subj "/C=NL/L=NL/O=CODAM/OU=student/CN=${DOMAIN_NAME}"
 
 ## req : request certificate
 ## -x509 : self-signed certificate
