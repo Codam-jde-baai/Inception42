@@ -11,7 +11,7 @@ RUN apt-get update && apt-get install -y openssl nginx
 ## making a new ssl keyl
 RUN openssl req -x509 -newkey rsa:2048 -nodes \
 	-out /etc/nginx/cert.pem \
-        -keyout /etc/nginx/key.pem -subj "/C=NL/L=NL/O=CODAM/OU=student/CN=${DOMAIN_NAME}"
+	-keyout /etc/nginx/key.pem -subj "/C=NL/L=NL/O=CODAM/OU=student/CN=${DOMAIN_NAME}"
 
 ## req : request certificate
 ## -x509 : self-signed certificate
