@@ -1,7 +1,8 @@
 FROM debian:11
 ##FROM is the base image
 
-RUN apt-get update && apt-get install -y openssl nginx
+
+RUN apt-get update && apt-get install -y nginx openssl
 ## apt-get update : general update
 ## apt-get install -y : install the package
 ## -y : assume yes to all prompts
