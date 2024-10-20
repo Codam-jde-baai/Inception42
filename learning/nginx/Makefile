@@ -18,8 +18,8 @@ testclean: down
 	docker image prune -af --filter "label!=debian:11"
 
 clean: down
-	docker system prune -af
-	docker volume prune -af
+	docker container prune -f
+	docker network prune -f
 #docker system prune: 
 # `docker system prune -af` removes all unused containers, networks, images (both dangling and unreferenced), and optionally, volumes.
 # It helps in reclaiming disk space by cleaning up unused docker artifacts.
@@ -29,6 +29,8 @@ status:
 	docker-compose -f $(DOCKER_COMPOSE) ps
 
 fclean: clean
+	docker system prune -af
+	docker volume prune -af
 
 re: fclean all
 
