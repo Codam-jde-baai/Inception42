@@ -2,11 +2,16 @@ DOCKER_COMPOSE = ./srcs/docker-compose.yml
 
 all: up
 
+build:
+	docker-compose -f $(DOCKER_COMPOSE) build
+
 up:
 	docker-compose -f $(DOCKER_COMPOSE) up -d
 
 down:
 	docker-compose -f $(DOCKER_COMPOSE) down
+
+rebuild: down build up
 
 clean: down
 	docker system prune -af
@@ -19,10 +24,13 @@ clean: down
 status:
 	docker-compose -f $(DOCKER_COMPOSE) ps
 
+logs:
+	docker-compose -f $(DOCKER_COMPOSE) logs
+
 fclean: clean
 
 re: fclean all
 
-.PHONY: all up down clean fclean re status
+.PHONY: all up down clean fclean re status logs
 
 

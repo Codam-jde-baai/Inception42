@@ -1,27 +1,24 @@
-FROM alpine:3.19
+FROM debian:11
+##FROM is the base image
 
-ARG DOMAIN_NAME
-
-##get the ARG:  DOMAIN_NAME from docker-compose
-
-RUN apk update && apk add --no-cache nginx openssl
-## apk update : general update
-##  --no-cache : prevents caching the index locally, saving storage
-## nginx : nginx installation
+RUN apt-get update && apt-get install -y openssl nginx
+## apt-get update : general update
+## apt-get install -y : install the package
+## -y : assume yes to all prompts
+## nginx : nginx installationl
 ## openssl : openssl installation
 
-## making a new ssl key
-RUN openssl req -x509 -nodes -newkey rsa:2048 \
-	-keyout /etc/ssl/private/${DOMAIN_NAME}.key \
-	-out /etc/ssl/certs/${DOMAIN_NAME}.crt \
-	-subj "/C=NL/L=NL/O=CODAM/OU=student/CN=${DOMAIN_NAME}"
+## making a new ssl keyl
+RUN openssl req -x509 -newkey rsa:2048 -nodes \
+	-out /etc/nginx/cert.pem \
+	-keyout /etc/nginx/key.pem -subj "/C=NL/L=NL/O=CODAM/OU=student/CN=${DOMAIN_NAME}"
 
 ## req : request certificate
 ## -x509 : self-signed certificate
 ## -nodes : no DES encryption, private key is not pw protected
 ## -newkey : new key
 ## -rsa:2048 : 2048 bit RSA key
-## -keyout : key output
+## -keyout : key outputl
 ## -out : output certificate
 ## -subj : general info for the certificate
 ## C : country
@@ -31,11 +28,17 @@ RUN openssl req -x509 -nodes -newkey rsa:2048 \
 ## CN : common name
 
 
-COPY ./conf/default.conf /etc/nginx/conf.d/default.conf
-## nginx will by default use the config file in conf.d (conf.d dir is created by the COPY)
+COPY ./conf/custom.conf /etc/nginx/conf.d/default.conf
+## nginx will by default use the config file in conf.d (conf.d dir is copied from the /conf dir by the COPY)
+
+COPY ./tools/index.html /usr/share/nginx/html/index.html
+
+EXPOSE 443
 
 
 ## difference between RUN and CMD
+# RUN is used to run the command in the docker image
+# CMD is used to set the default command for the docker container
 
 CMD ["nginx", "-g", "daemon off;"]
 

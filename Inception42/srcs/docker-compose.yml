@@ -13,26 +13,35 @@ services:
       - "443:443"
     depends_on:
       - mariadb
+    networks:
+      - inception
 
   mariadb:
     build:
       context: ./requirements/mariadb
       dockerfile: Dockerfile
       args:
-        - DOMAIN_NAME=${DOMAIN_NAME}
+        - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+        - MYSQL_DATABASE=${MYSQL_DATABASE}
+        - MYSQL_USER=${MYSQL_USER}
+        - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+        - MYSQL_ADMIN=${MYSQL_ADMIN}
+        - MYSQL_ADMIN_PASSWORD=${MYSQL_ADMIN_PASSWORD}
     container_name: mariadb
     restart: unless-stopped
     env_file:
       - .env
-    environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_DATABASE: ${MYSQL_DATABASE}
-      MYSQL_USER: ${MYSQL_USER}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     ports:
       - "3306:3306"
     volumes:
       - mariadb_data:/var/lib/mysql
+    networks:
+      - inception
 
 volumes:
   mariadb_data:
+
+
+networks:
+  inception:
+    name: inception_network

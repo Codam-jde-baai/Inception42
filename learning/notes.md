@@ -123,3 +123,22 @@ get logs during runtime (server booted but isnt loading webpage):
 docker logs 
 
 https://www.plesk.com/blog/various/nginx-configuration-guide/
+
+enter the container during runtime
+docker exec -it 62865c655774 /bin/bash
+
+check nginx specific logs:
+  docker exec <container_id> cat /var/log/nginx/error.log
+
+
+---
+
+Show the users in the mariadb conotainer:
+
+   docker ps
+
+      docker exec -it <container_name_or_id> /bin/bash
+
+   mysql -u root -p
+
+   SELECT User, Host FROM mysql.user;
