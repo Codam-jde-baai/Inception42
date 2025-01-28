@@ -5,17 +5,22 @@ all: up
 debian:
 	docker pull image debian
 
+build:
+	docker-compose -f $(DOCKER_COMPOSE) build
+
 up:
 	docker-compose -f $(DOCKER_COMPOSE) up -d
 
 down:
 	docker-compose -f $(DOCKER_COMPOSE) down
 
+rebuild: down build up
+
 testclean: down
 	docker container prune -f
 	docker network prune -f
 	docker volume prune -f
-	docker image prune -af --filter "label!=debian:11"
+	docker image prune -af --filter "label!=debian:latest"
 
 clean: down
 	docker container prune -f
@@ -32,8 +37,11 @@ fclean: clean
 	docker system prune -af
 	docker volume prune -af
 
+log:
+	docker-compose -f $(DOCKER_COMPOSE) logs
+
 re: fclean all
 
-.PHONY: all up down clean fclean re status debian testclean
+.PHONY: all up down clean fclean re status debian testclean log
 
 
