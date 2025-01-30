@@ -40,8 +40,13 @@ services:
 
 volumes:
   mariadb_data:
-
+    driver: local #volume is located on the host machine
+    driver_opts:
+      type: none
+      device: ${HOME}/inception42_volume/mariadb_data
+      o: bind
 
 networks:
   inception:
     name: inception_network
+    external: false

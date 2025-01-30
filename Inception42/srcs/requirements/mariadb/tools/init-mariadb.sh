@@ -1,19 +1,32 @@
 #!/bin/bash
 
-# Start MariaDB server in the background
-mysqld_safe --skip-networking &
+# Start the MariaDB server in the background
+mysqld_safe &
 
-# Wait for the server to be ready
+# wait for the mariadb server to setup
 until mysqladmin ping --silent; do
-    echo "Waiting for MariaDB to be ready..."
-    sleep 2
+    echo "Waiting for MariaDB to start..."
+    sleep 1
 done
 
-# Execute the SQL script
-mysql -u root -p"${MYSQL_ROOT_PASSWORD}" < /docker-entrypoint-initdb.d/init-mariadb.sh
+# Verify the my.cnf file is being used
+echo "Verifying my.cnf usage..."
+mysqld --verbose --help | grep -A 1 "Default options"
+mysqld --print-defaults
 
-# Shutdown the MariaDB server
+# Log the output of the SQL script execution
+echo "Executing SQL script..."
+mysqld --bootstrap < /docker-entrypoint-initdb.d/users.sql > /tmp/sql_script_output.log 2>&1
+
+if [ $? -ne 0 ]; then
+    echo "Failed to execute SQL script. Check /tmp/sql_script_output.log for details."
+    echo "Printing error log:"
+    cat /tmp/sql_script_output.log
+    exit 1
+fi
+
+# Shut down the MariaDB server gracefully
 mysqladmin shutdown
 
-# Start MariaDB server in the foreground
+# Start the MariaDB server in the foreground
 exec mysqld
