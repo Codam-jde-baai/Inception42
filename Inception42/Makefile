@@ -1,4 +1,5 @@
 DOCKER_COMPOSE = ./srcs/docker-compose.yml
+VOLUME_DIR = ${HOME}/inception42_volume/mariadb_data
 
 all: up
 
@@ -6,6 +7,10 @@ build:
 	docker-compose -f $(DOCKER_COMPOSE) build
 
 up:
+	@if [ ! -d "$(VOLUME_DIR)" ]; then \
+		echo "Creating volume directory $(VOLUME_DIR)"; \
+		mkdir -p $(VOLUME_DIR); \
+	fi
 	docker-compose -f $(DOCKER_COMPOSE) up -d
 
 down:

@@ -1,6 +1,6 @@
 FROM debian:buster
 
-# get the ARGS and set them to env
+## get the ARGS and set them to env
 ARG MYSQL_ROOT_PASSWORD
 ENV MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
 
@@ -19,24 +19,23 @@ ENV MYSQL_ADMIN=${MYSQL_ADMIN}
 ARG MYSQL_ADMIN_PASSWORD
 ENV MYSQL_ADMIN_PASSWORD=${MYSQL_ADMIN_PASSWORD}
 
+## install mariadb
 RUN apt-get update && \
-	apt-get install -y mariadb-server gettext-base && \
+	apt-get install -y mariadb-server && \
 	apt-get clean
 
 
-#add mariadb
-#add mariadb client
-#add gettext which is used by mariadb to handle the locale
 
 COPY ./tools/ /docker-entrypoint-initdb.d/
-RUN cat /docker-entrypoint-initdb.d/users.sql | envsubst > /docker-entrypoint-initdb.d/users.sql
+#RUN chmod +x /docker-entrypoint-initdb.d/init-mariadb.sh
+#RUN cat /docker-entrypoint-initdb.d/users.sql | envsubst > /docker-entrypoint-initdb.d/users.sql
 #copy the tools dir to /tools inside the docker container
 
-COPY ./conf/my.cnf /root/.my.cnf
+COPY ./conf/my.cnf /etc/mysql/.my.cnf
 RUN sed 's/bind-address = 127.0.0.1/bind-address = 0.0.0.0/' \
-	-i /root/.my.cnf
+	-i /etc/mysql/.my.cnf
 #replace the bind-address in the my.cnf file to 0.0.0.0
-RUN chmod 644 /root/.my.cnf
+RUN chmod 644 /etc/mysql/.my.cnf
 
 #creating files set in the my.cnf
 RUN mkdir -p /var/run/mysqld && \
@@ -47,9 +46,8 @@ RUN mkdir -p /var/run/mysqld && \
 	chown mysql:mysql /var/log/mysql
 
 
-RUN service mysql start && mysql < /docker-entrypoint-initdb.d/users.sql
 
 EXPOSE 3306
 
-CMD ["mysqld"]
-#ENTRYPOINT [ "/docker-entrypoint-initdb.d/init-mariadb.sh" ]
+CMD ["mysqld", "--defaults-file=/etc/mysql/my.cnf"]
+# ENTRYPOINT [ "/docker-entrypoint-initdb.d/init-mariadb.sh" ]
