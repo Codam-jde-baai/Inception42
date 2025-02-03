@@ -28,7 +28,7 @@ services:
         - MYSQL_ADMIN=${MYSQL_ADMIN}
         - MYSQL_ADMIN_PASSWORD=${MYSQL_ADMIN_PASSWORD}
     container_name: mariadb
-    restart: on-failure # @todo change to unless-stopped after debugging
+    restart: unless-stopped
     env_file:
       - .env
     ports:

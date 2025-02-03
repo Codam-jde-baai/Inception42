@@ -1,32 +1,23 @@
 services:
   wordpress:
-    build:
-      context: ./
+    build: 
+      context: .
       dockerfile: Dockerfile
-      args:
-        - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
-        - MYSQL_DATABASE=${MYSQL_DATABASE}
-        - MYSQL_USER=${MYSQL_USER}
-        - MYSQL_PASSWORD=${MYSQL_PASSWORD}
-        - MYSQL_ADMIN=${MYSQL_ADMIN}
-        - MYSQL_ADMIN_PASSWORD=${MYSQL_ADMIN_PASSWORD}
-    container_name: mariadb
-    restart: on-failure # @todo change to unless-stopped after debugging
+    container_name: wordpress
+    restart: on-failure
     env_file:
       - .env
-    ports:
-      - "3306:3306"
     volumes:
-      - mariadb_data:/var/lib/mysql
+      - wordpress_data:/var/www/html
     networks:
       - inception
 
 volumes:
-  mariadb_data:
+  wordpress_data:
     driver: local
     driver_opts:
       type: none
-      device: ${HOME}/inception42_volume/mariadb_data
+      device: ${HOME}/inception42_volume/wordpress_data
       o: bind
 
 networks:

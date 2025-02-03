@@ -142,3 +142,9 @@ Show the users in the mariadb conotainer:
   mysql -h localhost -u root -p
 
   SELECT User, Host FROM mysql.user;
+
+
+  ---------------
+
+
+  Cant test WP without mariadb 

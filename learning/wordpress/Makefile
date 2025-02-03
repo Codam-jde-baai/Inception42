@@ -1,4 +1,4 @@
-DOCKER_COMPOSE := ./srcs/docker-compose.yml
+DOCKER_COMPOSE := ./docker-compose.yml
 VOLUME_DIR := ${HOME}/inception42_volume/mariadb_data \
 				${HOME}/inception42_volume/wordpress_data
 COMPOSE := docker compose

@@ -1,13 +1,16 @@
 #!/bin/bash
 
+# Create necessary directories
+mkdir -p /run/mysqld
+mkdir -p /var/lib/mysql
+chown -R mysql:mysql /run/mysqld
+chown -R mysql:mysql /var/lib/mysql
+chown -R mysql:mysql /var/run/mysqld
 
-# Start MySQL in the background
-service mysql start 
-# Run the user SQL script
-mysql -u root -p"${MYSQL_ROOT_PASSWORD}" < /tools/users.sql
+# Initialize database if not already done
+if [ ! -d "/var/lib/mysql/mysql" ]; then
+    mysqld --initialize-insecure --user=mysql
+fi
 
-# Shutdown MySQL server
-mysqladmin shutdown
-
-# Run the server again (or exit, depending on your setup)
-exec mysqld
+# Execute the initialization SQL
+exec mysqld_safe --user=mysql --init-file=/tools/init.sql
