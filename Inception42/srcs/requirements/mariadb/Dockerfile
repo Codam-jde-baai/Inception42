@@ -1,6 +1,6 @@
 FROM debian:buster
 
-## get the ARGS and set them to env
+## Get the ARGS and set them to ENV
 ARG MYSQL_ROOT_PASSWORD
 ENV MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
 
@@ -19,35 +19,33 @@ ENV MYSQL_ADMIN=${MYSQL_ADMIN}
 ARG MYSQL_ADMIN_PASSWORD
 ENV MYSQL_ADMIN_PASSWORD=${MYSQL_ADMIN_PASSWORD}
 
-## install mariadb
+## Install MariaDB and required tools
 RUN apt-get update && \
-	apt-get install -y mariadb-server && \
+	apt-get install -y mariadb-server gettext-base && \
 	apt-get clean
 
+# Copy initialization files
+COPY ./tools/users.sql /tools/users.sql
+
+# Process SQL file with environment variables
+RUN cat /tools/users.sql | envsubst > /tools/users.sql
+
+# give permissions to the script
+#RUN chmod +x /tools/init-mariadb.sh
+
+# Copy MySQL configuration
+# COPY ./conf/my.cnf /etc/mysql/my.cnf
+RUN sed -i 's/bind-address = 127.0.0.1/bind-address = 0.0.0.0/' \
+	-i /etc/mysql/mariadb.conf.d/50-server.cnf
 
 
-COPY ./tools/ /docker-entrypoint-initdb.d/
-#RUN chmod +x /docker-entrypoint-initdb.d/init-mariadb.sh
-#RUN cat /docker-entrypoint-initdb.d/users.sql | envsubst > /docker-entrypoint-initdb.d/users.sql
-#copy the tools dir to /tools inside the docker container
+# Create necessary directories with correct permissions
+# RUN mkdir -p /var/run/mysqld /var/lib/mysql /var/log/mysql && \
+# 	chown -R mysql:mysql /var/run/mysqld /var/lib/mysql /var/log/mysql && \
+# 	chmod 755 /var/run/mysqld
 
-COPY ./conf/my.cnf /etc/mysql/.my.cnf
-RUN sed 's/bind-address = 127.0.0.1/bind-address = 0.0.0.0/' \
-	-i /etc/mysql/.my.cnf
-#replace the bind-address in the my.cnf file to 0.0.0.0
-RUN chmod 644 /etc/mysql/.my.cnf
-
-#creating files set in the my.cnf
-RUN mkdir -p /var/run/mysqld && \
-	chown mysql:mysql /var/run/mysqld && \
-	mkdir -p /var/lib/mysql && \
-	chown mysql:mysql /var/lib/mysql && \
-	mkdir -p /var/log/mysql && \
-	chown mysql:mysql /var/log/mysql
-
-
-
+RUN service mysql start && mysql < /tools/users.sql
+# Expose MariaDB port
 EXPOSE 3306
 
-CMD ["mysqld", "--defaults-file=/etc/mysql/my.cnf"]
-# ENTRYPOINT [ "/docker-entrypoint-initdb.d/init-mariadb.sh" ]
+CMD ["mysqld"]

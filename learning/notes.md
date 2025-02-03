@@ -139,6 +139,6 @@ Show the users in the mariadb conotainer:
 
       docker exec -it <container_name_or_id> /bin/bash
 
-   mysql -u root -p
+   mysql -u root
 
    SELECT User, Host FROM mysql.user;
