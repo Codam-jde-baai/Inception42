@@ -24,8 +24,8 @@ RUN chmod +x /tools/init-mariadb.sh
 RUN cat /tools/users.sql | envsubst > /tools/init.sql
 
 
-# Modify MariaDB configuration to allow remote connections
-RUN sed -i 's/bind-address.*=.*/bind-address = 0.0.0.0/' /etc/mysql/mariadb.conf.d/50-server.cnf
+# add the custom config to the directory last read by msql, making it the leading settings
+COPY ./conf root/.my.cnf
 
 
 
