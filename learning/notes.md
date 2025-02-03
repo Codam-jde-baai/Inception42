@@ -135,10 +135,10 @@ check nginx specific logs:
 
 Show the users in the mariadb conotainer:
 
-   docker ps
+  docker ps
 
-      docker exec -it <container_name_or_id> /bin/bash
+  docker exec -it <container_name_or_id> /bin/bash
 
-   mysql -u root
+  mysql -h localhost -u root -p
 
-   SELECT User, Host FROM mysql.user;
+  SELECT User, Host FROM mysql.user;
