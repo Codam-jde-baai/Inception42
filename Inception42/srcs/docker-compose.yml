@@ -1,21 +1,7 @@
-services:
-  nginx:
-    build:
-      context: ./requirements/nginx
-      dockerfile: Dockerfile
-      args:
-        - DOMAIN_NAME=${DOMAIN_NAME}
-    container_name: nginx
-    restart: unless-stopped
-    env_file:
-      - .env
-    ports:
-      - "443:443"
-    depends_on:
-      - mariadb
-    networks:
-      - inception
 
+# services are the containers. they are ordered based on their dependencies
+services:
+# mariadb container
   mariadb:
     build:
       context: ./requirements/mariadb
@@ -31,13 +17,45 @@ services:
     restart: unless-stopped
     env_file:
       - .env
-    ports:
-      - "3306:3306"
     volumes:
       - mariadb_data:/var/lib/mysql
     networks:
       - inception
+# wordpress container
+  wordpress:
+    build:
+      depends_on:
+        - mariadb
+      context: ./requirements/wordpress
+      dockerfile: Dockerfile
+      container_name: WordPress
+      restart: unless-stopped
+      env_file:
+        - .env
+      volumes:
+        - wordpress_data:/var/www/html
+      networks: 
+        - inception
+# nginx container
+  nginx:
+    build:
+      context: ./requirements/nginx
+      dockerfile: Dockerfile
+      args:
+        - DOMAIN_NAME=${DOMAIN_NAME}
+    container_name: nginx
+    restart: unless-stopped
+    env_file:
+      - .env
+    # to access a container from outside the docker network you need to set the port here
+    ports:
+      - "443:443"
+    depends_on:
+      - wordpress
+    networks:
+      - inception
 
+# volumes are dierctories shared between the containers and a different machine (in this case local)
 volumes:
   mariadb_data:
     driver: local #volume is located on the host machine
@@ -45,7 +63,14 @@ volumes:
       type: none
       device: ${HOME}/inception42_volume/mariadb_data
       o: bind
+  wordpress_data:
+    driver: local
+    driver_opts:
+      type: none
+      device: ${HOME}/inception42_volume/wordpress_data
+      o: bind
 
+# networks define the communication channels between containers, allowing them to connect and interact with each other
 networks:
   inception:
     name: inception_network

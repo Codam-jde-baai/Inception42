@@ -33,6 +33,8 @@ COPY ./conf/custom.conf /etc/nginx/conf.d/default.conf
 
 COPY ./tools/index.html /usr/share/nginx/html/index.html
 
+
+# port is already defined in docker-compose but leaving it here for clarity
 EXPOSE 443
 
 
@@ -41,7 +43,6 @@ EXPOSE 443
 # CMD is used to set the default command for the docker container
 
 CMD ["nginx", "-g", "daemon off;"]
-
 ## nginx : nginx command
 ## -g : set globally
 ## daemon off; : deamon is foreground or background, deamon off is run as a foreground process

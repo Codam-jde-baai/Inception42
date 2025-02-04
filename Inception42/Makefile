@@ -1,8 +1,9 @@
 DOCKER_COMPOSE := ./srcs/docker-compose.yml
+#volume dir for the volumes in the docker-compose
 VOLUME_DIR := ${HOME}/inception42_volume/mariadb_data \
 				${HOME}/inception42_volume/wordpress_data
+# depending on the installation its either docker compose or docker-compose
 COMPOSE := docker compose
-
 
 all: up
 
