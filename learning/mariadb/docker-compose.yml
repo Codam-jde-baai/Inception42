@@ -3,13 +3,6 @@ services:
     build:
       context: ./
       dockerfile: Dockerfile
-      args:
-        - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
-        - MYSQL_DATABASE=${MYSQL_DATABASE}
-        - MYSQL_USER=${MYSQL_USER}
-        - MYSQL_PASSWORD=${MYSQL_PASSWORD}
-        - MYSQL_ADMIN=${MYSQL_ADMIN}
-        - MYSQL_ADMIN_PASSWORD=${MYSQL_ADMIN_PASSWORD}
     container_name: mariadb
     restart: on-failure # @todo change to unless-stopped after debugging
     env_file:

@@ -6,13 +6,6 @@ services:
     build:
       context: ./requirements/mariadb
       dockerfile: Dockerfile
-      args:
-        - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
-        - MYSQL_DATABASE=${MYSQL_DATABASE}
-        - MYSQL_USER=${MYSQL_USER}
-        - MYSQL_PASSWORD=${MYSQL_PASSWORD}
-        - MYSQL_ADMIN=${MYSQL_ADMIN}
-        - MYSQL_ADMIN_PASSWORD=${MYSQL_ADMIN_PASSWORD}
     container_name: mariadb
     restart: unless-stopped
     env_file:
@@ -29,7 +22,7 @@ services:
       context: ./requirements/wordpress
       dockerfile: Dockerfile
     container_name: WordPress
-    restart: unless-stopped
+    restart: on-failure # @todo change to unless-stopped after debugging
     env_file:
       - .env
     volumes:
@@ -54,6 +47,8 @@ services:
       - wordpress
     networks:
       - inception
+#when debugging containrs set restart to on-failure
+
 
 # volumes are dierctories shared between the containers and a different machine (in this case local)
 volumes:
@@ -75,3 +70,4 @@ networks:
   inception:
     name: inception_network
     external: false
+

@@ -37,6 +37,7 @@ logs:
 	$(COMPOSE) -f $(DOCKER_COMPOSE) logs
 
 fclean: clean
+	rm -rf $(VOLUME_DIR)
 
 re: fclean all
 

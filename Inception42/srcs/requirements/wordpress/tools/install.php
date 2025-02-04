@@ -8,33 +8,15 @@ define('DISALLOW_FILE_EDIT', true);
 
 
 
-/**
-* The base configuration for WordPress
-*
-* The wp-config.php creation script uses this file during the
-* installation. You don't have to use the web site, you can
-* copy this file to "wp-config.php" and fill in the values.
-*
-* This file contains the following configurations:
-*
-* * MySQL settings
-* * Secret keys
-* * Database table prefix
-* * ABSPATH
-*
-* @link https://wordpress.org/support/article/editing-wp-config-php/
-*
-* @package WordPress
-*/
 
-<?php
-define( 'DB_NAME', getenv('WORDPRESS_DB_NAME') );
-define( 'DB_USER', getenv('WORDPRESS_DB_USER') );
-define( 'DB_PASSWORD', getenv('WORDPRESS_DB_PASSWORD') );
-define( 'DB_HOST', getenv('WORDPRESS_DB_HOST') );
-define( 'DB_CHARSET', 'utf8mb4' );
-define( 'DB_COLLATE', '' );
+define('DB_NAME', getenv('MYSQL_DATABASE'));
+define('DB_USER', getenv('MYSQL_USER'));
+define('DB_PASSWORD', getenv('MYSQL_PASSWORD'));
+define('DB_HOST', getenv('MYSQL_HOST'));
+define('DB_CHARSET', 'utf8mb4');
+define('DB_COLLATE', '');
 
+# I generate the secure SALT key from https://api.wordpress.org/secret-key/1.1/salt/
 define('AUTH_KEY',         '!;k)EMUyn<3TfYC{a] 4SNLd6`XGB;EMgg-CMt:+Bsii<y9j+b4!VAC.<2 ;U-,P');
 define('SECURE_AUTH_KEY',  'HGb%s~0~_KDDrI&o<^![mp1Jl-S+Njn9n&.&3x+vz.cy*pUR)4-jevd!rC%k:o!~');
 define('LOGGED_IN_KEY',    'sq-brCqz`L{l$Q@Uz+m<kk+Jfn1FPk_|`Nb<I.Tit!vki,9-lv[A0pVYGsduFecH');
@@ -54,6 +36,23 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 require_once ABSPATH . 'wp-settings.php';
 
-# I generate the secure SALT key from https://api.wordpress.org/secret-key/1.1/salt/
+/**
+* The base configuration for WordPress
+*
+* The wp-config.php creation script uses this file during the
+* installation. You don't have to use the web site, you can
+* copy this file to "wp-config.php" and fill in the values.
+*
+* This file contains the following configurations:
+*
+* * MySQL settings
+* * Secret keys
+* * Database table prefix
+* * ABSPATH
+*
+* @link https://wordpress.org/support/article/editing-wp-config-php/
+*
+* @package WordPress
+*/
 
 
