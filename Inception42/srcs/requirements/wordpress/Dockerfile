@@ -11,32 +11,32 @@ RUN apt-get update && apt-get install -y \
     php7.3-xml \
     php7.3-zip \
     wget \
-    && rm -rf /var/lib/apt/lists/*
+    mariadb-client \
+    && apt-get clean
 
 # Download WordPress CLI
 RUN wget https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar \
     && chmod +x wp-cli.phar \
     && mv wp-cli.phar /usr/local/bin/wp
 
-# Create WordPress directory
-RUN mkdir -p /var/www/html
+# Create WordPress directory and log directories
+RUN mkdir -p /var/www/html /var/log/php-fpm
 
-#setting the dockerfile's working directory
+# Set working directory
 WORKDIR /var/www/html
 
-RUN mkdir -p /var/log/php-fpm \
-	/var/log/php-fpm
-
-# Copy WordPress install.php and the entrypoint script
-COPY ./tools/install.php /var/www/html/wp-content/install.php
+# Copy configuration and scripts
 COPY ./tools/setup-wp.sh /tools/setup-wp.sh
+COPY ./conf/www.conf /etc/php/7.3/fpm/pool.d/www.conf
+
+# Ensure script is executable
 RUN chmod +x /tools/setup-wp.sh
 
-# COPY the config file for custom settings
-COPY ./conf/www.conf /etc/php/7.3/fpm/pool.d/www.conf
+# Ensure log directory permissions
+RUN chown -R www-data:www-data /var/www/html /var/log/php-fpm
 
 # Expose PHP-FPM port
 EXPOSE 9000
 
 # Entrypoint script
-CMD ["/tools/setup-wp.sh"]
+ENTRYPOINT ["/tools/setup-wp.sh"]

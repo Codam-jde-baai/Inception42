@@ -14,7 +14,9 @@ ENV MYSQL_PASSWORD=${MYSQL_PASSWORD}
 ENV MYSQL_ADMIN=${MYSQL_ADMIN}
 ENV MYSQL_ADMIN_PASSWORD=${MYSQL_ADMIN_PASSWORD}
 
-RUN apt-get update -y && apt-get install -y mariadb-server gettext-base
+RUN apt-get update -y \ 
+	&& apt-get install -y mariadb-server gettext-base \
+	&& apt-get clean
 
 # copy the users.sql and the init-mariadb.sh
 COPY ./tools /tools
