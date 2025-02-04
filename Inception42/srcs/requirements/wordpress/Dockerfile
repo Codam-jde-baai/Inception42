@@ -1,41 +1,36 @@
-FROM debian:buster
+FROM debian:bookworm
 
-# Install required dependencies
-RUN apt-get update && apt-get install -y \
-    php7.3 \
-    php7.3-fpm \
-    php7.3-mysql \
-    php7.3-curl \
-    php7.3-gd \
-    php7.3-mbstring \
-    php7.3-xml \
-    php7.3-zip \
-    wget \
-    mariadb-client \
-    && apt-get clean
+RUN apt-get update -y && \
+    apt-get -y install \
+        php8.2 \
+        php-fpm \
+        php-mysql \
+        mariadb-client \
+        wget \
+        curl \
+        sendmail && \
+    apt-get clean
 
-# Download WordPress CLI
-RUN wget https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar \
-    && chmod +x wp-cli.phar \
-    && mv wp-cli.phar /usr/local/bin/wp
+# Install WP-CLI
+RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar && \
+    chmod +x wp-cli.phar && \
+    mv wp-cli.phar /usr/local/bin/wp
 
-# Create WordPress directory and log directories
-RUN mkdir -p /var/www/html /var/log/php-fpm
+# Create directories and set permissions
+RUN mkdir -p /run/php /var/www/html/wordpress /var/log/php-fpm && \
+    touch /run/php/php8.2-fpm.pid && \
+    chown -R www-data:www-data /var/www/* /var/log/php-fpm && \
+    chmod -R 755 /var/www/*
 
-# Set working directory
-WORKDIR /var/www/html
+# Copy cpmf + install + script
+COPY conf/www.conf /etc/php/8.2/fpm/pool.d
+COPY tools/setup-wp.sh /tools/setup-wp.sh
+COPY tools/install.php /var/www/html/wordpress/install.php
 
-# Copy configuration and scripts
-COPY ./tools/setup-wp.sh /tools/setup-wp.sh
-COPY ./conf/www.conf /etc/php/7.3/fpm/pool.d/www.conf
-
-# Ensure script is executable
+# make script executable
 RUN chmod +x /tools/setup-wp.sh
 
-# Ensure log directory permissions
-RUN chown -R www-data:www-data /var/www/html /var/log/php-fpm
-
-# Expose PHP-FPM port
+# Expose PHP port
 EXPOSE 9000
 
 # Entrypoint script

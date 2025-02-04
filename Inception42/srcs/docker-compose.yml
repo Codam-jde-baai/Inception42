@@ -22,7 +22,7 @@ services:
       context: ./requirements/wordpress
       dockerfile: Dockerfile
     container_name: WordPress
-    restart: on-failure # @todo change to unless-stopped after debugging
+    restart: on-failure # @todo change to unless-stopped
     env_file:
       - .env
     volumes:

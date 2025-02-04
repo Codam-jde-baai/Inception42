@@ -3,19 +3,19 @@
 set -e
 
 
-echo "MYSQL_DATABASE: $MYSQL_DATABASE"  
-echo "MYSQL_USER: $MYSQL_USER"  
-echo "MYSQL_PASSWORD: $MYSQL_PASSWORD"  
-echo "MYSQL_HOST: $MYSQL_HOST"  
-echo "WORDPRESS_URL: $WORDPRESS_URL"  
-echo "WORDPRESS_TITLE: $WORDPRESS_TITLE"  
-echo "WORDPRESS_ADMIN_USER: $WORDPRESS_ADMIN_USER"  
-echo "WORDPRESS_ADMIN_PASSWORD: $WORDPRESS_ADMIN_PASSWORD"  
-echo "WORDPRESS_ADMIN_EMAIL: $WORDPRESS_ADMIN_EMAIL"  
-echo "WORDPRESS_USER: $WORDPRESS_USER"  
-echo "WORDPRESS_USER_PASSWORD: $WORDPRESS_USER_PASSWORD"
-echo "WORDPRESS_USER_EMAIL: $WORDPRESS_USER_EMAIL"
-echo "WP_DEBUG: $WP_DEBUG"
+echo "MYSQL_HOST: $MYSQL_HOST"
+echo "MYSQL_DATABASE: $MYSQL_DATABASE"
+echo "MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD"
+echo "MYSQL_ADMIN: $MYSQL_ADMIN"
+echo "MYSQL_ADMIN_PASSWORD: $MYSQL_ADMIN_PASSWORD"
+echo "MYSQL_USER: $MYSQL_USER"
+echo "MYSQL_PASSWORD: $MYSQL_PASSWORD"
+echo "WP_URL: $WP_URL"
+echo "WP_TITLE: $WP_TITLE"
+echo "WP_ADMIN_PW: $WP_ADMIN_PW"
+echo "WP_USER: $WP_USER"
+echo "WP_USER_PASSWORD: $WP_USER_PASSWORD"
+echo "WP_USER_EMAIL: $WP_USER_EMAIL"
 
 
 # Maximum number of connection attempts
@@ -40,43 +40,44 @@ if [ $ATTEMPT -eq $MAX_ATTEMPTS ]; then
     exit 1
 fi
 
-# Navigate to WordPress directory
-cd /var/www/html
+# Check if WordPress is already installed
+if [ ! -f /var/www/html/wordpress/wp-config.php ]; then
+    cd /var/www/html/wordpress
+    
+    # Downloading WordPress
+    wp core download \
+        --path="/var/www/html/wordpress/" \
+        --allow-root
+    echo "WordPress downloaded."
 
-# Remove existing WordPress files
-rm -rf *
+    # Create wp-config.php using install.php
+    echo "Creating WordPress Configuration..."
+    php /var/www/html/wordpress/install.php
 
-# Download WordPress
-wp core download --allow-root
+    # Create Wordpress Admin
+    echo "Creating Wordpress Admin..."
+    wp core install \
+        --path="/var/www/html/wordpress/" \
+        --url="${WP_URL}" \
+        --title="inception" \
+        --admin_user="${MYSQL_ADMIN}" \
+        --admin_password="${MYSQL_ADMIN_PASSWORD}" \
+        --admin_email="${WP_ADMIN_PW}" \
+        --allow-root
 
-# Configure WordPress with force flag
-wp config create \
-    --dbname=$MYSQL_DATABASE \
-    --dbuser=$MYSQL_USER \
-    --dbpass=$MYSQL_PASSWORD \
-    --dbhost=mariadb \
-    --allow-root \
-    --force
+    # Create Wordpress User
+    echo "Creating Wordpress User..." 
+    wp user create ${WP_USER} ${WP_USER_EMAIL} \
+        --path="/var/www/html/wordpress/" \
+        --user_pass="${WP_USER_PASSWORD}" \
+        --role=editor \
+        --allow-root
 
-# Install WordPress with additional error handling
-if ! wp core install \
-    --url=$WORDPRESS_URL \
-    --title="$WORDPRESS_TITLE" \
-    --admin_user=$WORDPRESS_ADMIN_USER \
-    --admin_password=$WORDPRESS_ADMIN_PASSWORD \
-    --admin_email=$WORDPRESS_ADMIN_EMAIL \
-    --allow-root \
-    --skip-email; then
-    echo "WordPress installation failed. Attempting to create tables manually."
-    wp db create --allow-root
-    wp core create-tables --allow-root
+    echo "WordPress setup complete."
+else
+    echo "WordPress is already downloaded and setup."
 fi
 
-# Create a second user
-wp user create $WORDPRESS_USER $WORDPRESS_USER_EMAIL \
-    --role=editor \
-    --user_pass=$WORDPRESS_USER_PASSWORD \
-    --allow-root
-
-# Start PHP-FPM
-exec php-fpm7.3 -F
+# Start PHP-FPM in the foreground
+echo "Succesfully reached start point of WordPress"
+exec /usr/sbin/php-fpm8.2 -F
