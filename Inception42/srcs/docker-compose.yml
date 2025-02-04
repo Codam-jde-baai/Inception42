@@ -21,21 +21,21 @@ services:
       - mariadb_data:/var/lib/mysql
     networks:
       - inception
-# wordpress container
+#wordpress container
   wordpress:
+    depends_on:
+      - mariadb
     build:
-      depends_on:
-        - mariadb
       context: ./requirements/wordpress
       dockerfile: Dockerfile
-      container_name: WordPress
-      restart: unless-stopped
-      env_file:
-        - .env
-      volumes:
-        - wordpress_data:/var/www/html
-      networks: 
-        - inception
+    container_name: WordPress
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      - wordpress_data:/var/www/html
+    networks: 
+      - inception
 # nginx container
   nginx:
     build:
