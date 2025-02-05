@@ -1,7 +1,11 @@
 <?php
 
 // Load the sample configuration file
-$config = file_get_contents('/var/www/html/wordpress/wp-config-sample.php');
+$config = file_get_contents('/var/www/html/wp-config-sample.php');
+
+// add WP_HOME & SITEURL
+$config .= "define('WP_HOME', '" . getenv('WP_URL') . "');\n";
+$config .= "define('WP_SITEURL', '" . getenv('WP_URL') . "');\n";
 
 // Define replacements for placeholders in the sample config
 $replacements = [
@@ -10,6 +14,7 @@ $replacements = [
     "password_here" => getenv('MYSQL_PASSWORD'),
     "localhost" => getenv('MYSQL_HOST')
 ];
+
 
 // Replace placeholders with environment variable values
 foreach ($replacements as $placeholder => $value) {
@@ -36,7 +41,7 @@ foreach ($salt_keys as $key => $value) {
 $config .= "\ndefine('WP_DEBUG', filter_var(getenv('WP_DEBUG'), FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) ?? false);\n";
 
 // Write the updated configuration to wp-config.php
-file_put_contents('/var/www/html/wordpress/wp-config.php', $config);
+file_put_contents('/var/www/html/wp-config.php', $config);
 echo "wp-config.php created successfully.";
 
 /**

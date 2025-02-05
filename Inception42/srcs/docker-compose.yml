@@ -1,7 +1,6 @@
-
 # services are the containers. they are ordered based on their dependencies
 services:
-# mariadb container
+  # mariadb container
   mariadb:
     build:
       context: ./requirements/mariadb
@@ -14,7 +13,7 @@ services:
       - mariadb_data:/var/lib/mysql
     networks:
       - inception
-#wordpress container
+  #wordpress container
   wordpress:
     depends_on:
       - mariadb
@@ -22,14 +21,14 @@ services:
       context: ./requirements/wordpress
       dockerfile: Dockerfile
     container_name: WordPress
-    restart: on-failure # @todo change to unless-stopped
+    restart: unless-stopped # @todo change to unless-stopped
     env_file:
       - .env
     volumes:
       - wordpress_data:/var/www/html
-    networks: 
+    networks:
       - inception
-# nginx container
+  # nginx container
   nginx:
     build:
       context: ./requirements/nginx
@@ -47,10 +46,12 @@ services:
       - wordpress
     networks:
       - inception
-#when debugging containrs set restart to on-failure
+    volumes:
+      - wordpress_data:/var/www/html/
+    #when debugging containrs set restart to on-failure
 
 
-# volumes are dierctories shared between the containers and a different machine (in this case local)
+    # volumes are dierctories shared between the containers and a different machine (in this case local)
 volumes:
   mariadb_data:
     driver: local #volume is located on the host machine
@@ -70,4 +71,3 @@ networks:
   inception:
     name: inception_network
     external: false
-

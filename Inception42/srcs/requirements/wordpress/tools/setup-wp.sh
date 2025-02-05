@@ -12,7 +12,7 @@ echo "MYSQL_USER: $MYSQL_USER"
 echo "MYSQL_PASSWORD: $MYSQL_PASSWORD"
 echo "WP_URL: $WP_URL"
 echo "WP_TITLE: $WP_TITLE"
-echo "WP_ADMIN_PW: $WP_ADMIN_PW"
+echo "WP_ADMIN_MAIL: $WP_ADMIN_MAIL"
 echo "WP_USER: $WP_USER"
 echo "WP_USER_PASSWORD: $WP_USER_PASSWORD"
 echo "WP_USER_EMAIL: $WP_USER_EMAIL"
@@ -41,34 +41,32 @@ if [ $ATTEMPT -eq $MAX_ATTEMPTS ]; then
 fi
 
 # Check if WordPress is already installed
-if [ ! -f /var/www/html/wordpress/wp-config.php ]; then
-    cd /var/www/html/wordpress
+if [ ! -f /var/www/html/wp-config.php ]; then
+    cd /var/www/html
     
     # Downloading WordPress
     wp core download \
-        --path="/var/www/html/wordpress/" \
+        --path="/var/www/html/" \
         --allow-root
     echo "WordPress downloaded."
 
     # Create wp-config.php using install.php
     echo "Creating WordPress Configuration..."
-    php /var/www/html/wordpress/install.php
+    php /var/www/html/install.php
 
     # Create Wordpress Admin
     echo "Creating Wordpress Admin..."
     wp core install \
-        --path="/var/www/html/wordpress/" \
         --url="${WP_URL}" \
-        --title="inception" \
+        --title="${WP_TITLE}" \
         --admin_user="${MYSQL_ADMIN}" \
         --admin_password="${MYSQL_ADMIN_PASSWORD}" \
-        --admin_email="${WP_ADMIN_PW}" \
+        --admin_email="${WP_ADMIN_MAIL}" \
         --allow-root
 
     # Create Wordpress User
     echo "Creating Wordpress User..." 
     wp user create ${WP_USER} ${WP_USER_EMAIL} \
-        --path="/var/www/html/wordpress/" \
         --user_pass="${WP_USER_PASSWORD}" \
         --role=editor \
         --allow-root
