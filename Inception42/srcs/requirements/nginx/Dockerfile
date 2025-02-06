@@ -5,7 +5,7 @@ ARG DOMAIN_NAME
 ENV DOMAIN_NAME=$DOMAIN_NAME
 
 RUN apt-get update \
-	&& apt-get install -y openssl nginx gettext-base moreutils \
+	&& apt-get install -y openssl nginx \
 	&& apt-get clean
 ## apt-get update : general update
 ## apt-get install -y : install the package
@@ -35,8 +35,6 @@ RUN openssl req -x509 -newkey rsa:2048 -nodes \
 
 COPY ./conf/custom.conf /etc/nginx/conf.d/default.conf
 ## nginx will by default use the config file in conf.d (conf.d dir is copied from the /conf dir by the COPY)
-
-RUN envsubst < /etc/nginx/conf.d/default.conf | sponge /etc/nginx/conf.d/default.conf
 
 COPY ./tools/index.html /usr/share/nginx/html/index.html
 

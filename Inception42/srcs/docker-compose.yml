@@ -20,7 +20,7 @@ services:
     build:
       context: ./requirements/wordpress
       dockerfile: Dockerfile
-    container_name: WordPress
+    container_name: wordpress
     restart: unless-stopped # @todo change to unless-stopped
     env_file:
       - .env
@@ -54,12 +54,14 @@ services:
     # volumes are dierctories shared between the containers and a different machine (in this case local)
 volumes:
   mariadb_data:
+    name: volmariadb
     driver: local #volume is located on the host machine
     driver_opts:
       type: none
       device: ${HOME}/inception42_volume/mariadb_data
       o: bind
   wordpress_data:
+    name: volwp
     driver: local
     driver_opts:
       type: none
@@ -71,3 +73,4 @@ networks:
   inception:
     name: inception_network
     external: false
+    driver: bridge

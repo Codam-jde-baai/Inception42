@@ -1,13 +1,51 @@
 <?php
+// Function to generate a random salt key
+function generate_salt_key($length = 64) {
+    $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_+-=[]{}|;:,.<>?';
+    $charactersLength = strlen($characters);
+    $randomString = '';
+    for ($i = 0; $i < $length; $i++) {
+        $randomString .= $characters[random_int(0, $charactersLength - 1)];
+    }
+    return $randomString;
+}
+
+// Verify environment variables are set
+$required_env = [
+    'MYSQL_DATABASE',
+    'MYSQL_USER',
+    'MYSQL_PASSWORD',
+    'MYSQL_HOST',
+    'WP_URL'
+];
+
+foreach ($required_env as $env) {
+    if (!getenv($env)) {
+        die("Error: Required environment variable $env is not set\n");
+    }
+}
 
 // Load the sample configuration file
-$config = file_get_contents('/var/www/html/wp-config-sample.php');
+$config_sample = '/var/www/html/wp-config-sample.php';
+if (!file_exists($config_sample)) {
+    die("Error: wp-config-sample.php not found\n");
+}
 
-// add WP_HOME & SITEURL
-$config .= "define('WP_HOME', '" . getenv('WP_URL') . "');\n";
-$config .= "define('WP_SITEURL', '" . getenv('WP_URL') . "');\n";
+$config = file_get_contents($config_sample);
 
-// Define replacements for placeholders in the sample config
+// Prepare salt keys
+$salt_keys = [
+    'AUTH_KEY', 
+    'SECURE_AUTH_KEY', 
+    'LOGGED_IN_KEY', 
+    'NONCE_KEY', 
+    'AUTH_SALT', 
+    'SECURE_AUTH_SALT', 
+    'LOGGED_IN_SALT', 
+    'NONCE_SALT'
+];
+
+// Replace placeholders in the config
 $replacements = [
     "database_name_here" => getenv('MYSQL_DATABASE'),
     "username_here" => getenv('MYSQL_USER'),
@@ -15,35 +53,35 @@ $replacements = [
     "localhost" => getenv('MYSQL_HOST')
 ];
 
-
-// Replace placeholders with environment variable values
 foreach ($replacements as $placeholder => $value) {
     $config = str_replace($placeholder, $value, $config);
 }
 
-// Add SALT keys to the configuration
-$salt_keys = [
-    'AUTH_KEY' => '!;k)EMUyn<3TfYC{a] 4SNLd6`XGB;EMgg-CMt:+Bsii<y9j+b4!VAC.<2 ;U-,P',
-    'SECURE_AUTH_KEY' => 'HGb%s~0~_KDDrI&o<^![mp1Jl-S+Njn9n&.&3x+vz.cy*pUR)4-jevd!rC%k:o!~',
-    'LOGGED_IN_KEY' => 'sq-brCqz`L{l$Q@Uz+m<kk+Jfn1FPk_|`Nb<I.Tit!vki,9-lv[A0pVYGsduFecH',
-    'NONCE_KEY' => 'BZ{:$FJQb3j7|L4[?$$[!op<OF5~7v:xIZH56LP0+$y|`$F=~~OftvAz3|(RCl2t',
-    'AUTH_SALT' => 'e1af4>.cNi79WE(Lmy%FxD+`SVcE;-m/uTj76[1{d3@]d4/&|& JVuZ|z-)W;ow-',
-    'SECURE_AUTH_SALT' => '3E A<_;=(h+ N,Z2*0=XNASIWr~w+z/^xsB-_^k#+6iE7G#j[Ei#m[@=a$(&6?| ',
-    'LOGGED_IN_SALT' => '7^g4zAW~szi#-rD6}F[7frO<8YFqi}-^Dh?qjcm}%j!xHYE&O}}.c|Z;,h=8h3< ',
-    'NONCE_SALT' => 'cxui#!MtwCLQD|!DJ4ai 9PeI7~Cs+S`:vZds9URa!@nc/#%p>n8|96l]fYxsR6Y'
-];
+// Add configuration for WP_HOME and WP_SITEURL
+$wp_url = getenv('WP_URL');
+$config .= "\n// Custom WordPress URL configuration\n";
+$config .= "define('WP_HOME', '$wp_url');\n";
+$config .= "define('WP_SITEURL', '$wp_url');\n";
 
-foreach ($salt_keys as $key => $value) {
-    $config .= "define('$key', '$value');\n";
+// Add salt keys with generated random values
+$config .= "\n// WordPress Authentication Unique Keys and Salts\n";
+foreach ($salt_keys as $key) {
+    $salt_value = generate_salt_key();
+    $config .= "define('$key', '$salt_value');\n";
 }
 
-// Add additional configurations
-$config .= "\ndefine('WP_DEBUG', filter_var(getenv('WP_DEBUG'), FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) ?? false);\n";
+// Add debug configuration
+$debug_enabled = filter_var(getenv('WP_DEBUG'), FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) ?? false;
+$config .= "\n// WordPress Debug Settings\n";
+$config .= "define('WP_DEBUG', " . ($debug_enabled ? 'true' : 'false') . ");\n";
 
 // Write the updated configuration to wp-config.php
-file_put_contents('/var/www/html/wp-config.php', $config);
-echo "wp-config.php created successfully.";
+$config_file = '/var/www/html/wp-config.php';
+if (file_put_contents($config_file, $config) === false) {
+    die("Error: Failed to write wp-config.php\n");
+}
 
+echo "wp-config.php created successfully with unique salt keys.\n";
 /**
 * The base configuration for WordPress
 *

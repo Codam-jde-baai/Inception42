@@ -25,7 +25,7 @@ RUN mkdir -p /run/php /var/www/html/ /var/log/php-fpm && \
 # Copy cpmf + install + script
 COPY conf/www.conf /etc/php/8.2/fpm/pool.d
 COPY tools/setup-wp.sh /tools/setup-wp.sh
-COPY tools/install.php /var/www/html/install.php
+#COPY tools/install.php /var/www/html/install.php
 
 # make script executable
 RUN chmod +x /tools/setup-wp.sh

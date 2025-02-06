@@ -2,22 +2,6 @@
 
 set -e
 
-
-echo "MYSQL_HOST: $MYSQL_HOST"
-echo "MYSQL_DATABASE: $MYSQL_DATABASE"
-echo "MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD"
-echo "MYSQL_ADMIN: $MYSQL_ADMIN"
-echo "MYSQL_ADMIN_PASSWORD: $MYSQL_ADMIN_PASSWORD"
-echo "MYSQL_USER: $MYSQL_USER"
-echo "MYSQL_PASSWORD: $MYSQL_PASSWORD"
-echo "WP_URL: $WP_URL"
-echo "WP_TITLE: $WP_TITLE"
-echo "WP_ADMIN_MAIL: $WP_ADMIN_MAIL"
-echo "WP_USER: $WP_USER"
-echo "WP_USER_PASSWORD: $WP_USER_PASSWORD"
-echo "WP_USER_EMAIL: $WP_USER_EMAIL"
-
-
 # Maximum number of connection attempts
 MAX_ATTEMPTS=30
 ATTEMPT=0
@@ -48,14 +32,16 @@ if [ ! -f /var/www/html/wp-config.php ]; then
     wp core download \
         --path="/var/www/html/" \
         --allow-root
-    echo "WordPress downloaded."
 
-    # Create wp-config.php using install.php
-    echo "Creating WordPress Configuration..."
-    php /var/www/html/install.php
+    # Create wp-config.php using WP-CLI
+    wp config create \
+        --dbname=$MYSQL_DATABASE \
+        --dbuser=$MYSQL_USER \
+        --dbpass=$MYSQL_PASSWORD \
+        --dbhost=$MYSQL_HOST \
+        --allow-root
 
     # Create Wordpress Admin
-    echo "Creating Wordpress Admin..."
     wp core install \
         --url="${WP_URL}" \
         --title="${WP_TITLE}" \
@@ -65,11 +51,21 @@ if [ ! -f /var/www/html/wp-config.php ]; then
         --allow-root
 
     # Create Wordpress User
-    echo "Creating Wordpress User..." 
     wp user create ${WP_USER} ${WP_USER_EMAIL} \
         --user_pass="${WP_USER_PASSWORD}" \
         --role=editor \
         --allow-root
+
+    # Set WP Home and Site URL
+    wp option update home "${WP_URL}" --allow-root
+    wp option update siteurl "${WP_URL}" --allow-root
+
+    # Enable/Disable debugging based on environment
+    if [ "$WP_DEBUG" = "true" ]; then
+        wp config set WP_DEBUG true --allow-root
+    else
+        wp config set WP_DEBUG false --allow-root
+    fi
 
     echo "WordPress setup complete."
 else
@@ -77,5 +73,5 @@ else
 fi
 
 # Start PHP-FPM in the foreground
-echo "Succesfully reached start point of WordPress"
+echo "Successfully reached start point of WordPress"
 exec /usr/sbin/php-fpm8.2 -F

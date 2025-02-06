@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cat /tools/users.sql | envsubst > /tools/users.sql
+envsubst < /tools/users.sql > /tools/parsed_users.sql
 
 # Create necessary directories
 mkdir -p /run/mysqld
@@ -17,4 +17,4 @@ if [ ! -d "/var/lib/mysql/mysql" ]; then
 fi
 
 # Execute the initialization SQL
-exec mysqld --user=mysql --init-file=/tools/users.sql
+exec mysqld --user=mysql --init-file=/tools/parsed_users.sql
