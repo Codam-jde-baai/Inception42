@@ -5,13 +5,15 @@ ARG DOMAIN_NAME
 ENV DOMAIN_NAME=$DOMAIN_NAME
 
 RUN apt-get update \
-	&& apt-get install -y openssl nginx \
+	&& apt-get install -y openssl nginx net-tools \
 	&& apt-get clean
+
 ## apt-get update : general update
 ## apt-get install -y : install the package
 ## -y : assume yes to all prompts
 ## nginx : nginx installationl
 ## openssl : openssl installation
+## telnet added for testing
 
 ## making a new ssl keyl
 RUN openssl req -x509 -newkey rsa:2048 -nodes \

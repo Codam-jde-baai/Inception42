@@ -8,8 +8,10 @@ RUN apt-get update -y && \
     mariadb-client \
     wget \
     curl \
-    sendmail && \
+    sendmail \
+    net-tools && \
     apt-get clean
+#remove net-tools later, is for tesing
 
 # Install WP-CLI
 RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar && \

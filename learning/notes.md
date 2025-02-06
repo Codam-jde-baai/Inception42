@@ -148,3 +148,9 @@ Show the users in the mariadb conotainer:
 
 
   Cant test WP without mariadb 
+
+  ///////////
+
+
+  showing nginx things:
+  nginx -T
