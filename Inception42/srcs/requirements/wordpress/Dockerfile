@@ -22,7 +22,9 @@ RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli
 RUN mkdir -p /run/php /var/www/html/ /var/log/php-fpm && \
     touch /run/php/php8.2-fpm.pid && \
     chown -R www-data:www-data /var/www/* /var/log/php-fpm && \
-    chmod -R 755 /var/www/*
+    chmod -R 755 /var/www/* && \
+    chmod 755 /var/log/php-fpm && \
+    chown www-data:www-data /var/log/php-fpm
 
 # Copy cpmf + install + script
 COPY conf/www.conf /etc/php/8.2/fpm/pool.d
