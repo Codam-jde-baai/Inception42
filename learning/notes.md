@@ -139,18 +139,22 @@ Show the users in the mariadb conotainer:
 
   docker exec -it <container_name_or_id> /bin/bash
 
-  mysql -h localhost -u root -p
+  mysql -uranuser -p12345
 
-  SELECT User, Host FROM mysql.user;
+  SHOW DATABASES;
+
+  USE database_name
+
+  SHOW TABLES;
+
+  SELECT * FROM table_name;
 
 
   ---------------
 
-
-  Cant test WP without mariadb 
-
-  ///////////
-
-
   showing nginx things:
   nginx -T
+
+  -------------------
+
+  showing wp things

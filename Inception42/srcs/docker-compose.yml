@@ -30,6 +30,8 @@ services:
       - inception
   # nginx container
   nginx:
+    depends_on:
+      - wordpress
     build:
       context: ./requirements/nginx
       dockerfile: Dockerfile
@@ -42,8 +44,6 @@ services:
     # to access a container from outside the docker network you need to set the port here
     ports:
       - "443:443"
-    depends_on:
-      - wordpress
     networks:
       - inception
     volumes:
