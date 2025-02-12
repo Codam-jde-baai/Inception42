@@ -9,9 +9,7 @@ RUN apt-get update -y && \
     wget \
     curl \
     sendmail \
-    net-tools && \
     apt-get clean
-#remove net-tools later, is for tesing
 
 # Install WP-CLI
 RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar && \
@@ -19,11 +17,10 @@ RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli
     mv wp-cli.phar /usr/local/bin/wp
 
 # Create directories and set permissions
-RUN mkdir -p /run/php /var/www/html/ /var/log/php-fpm && \
+RUN mkdir -p /run/php8.2 /var/www/html/ /var/log/php8.2-fpm && \
     touch /run/php/php8.2-fpm.pid && \
-    chown -R www-data:www-data /var/www/* /var/log/php-fpm && \
-    chmod -R 755 /var/www/* && \
-    chmod 755 /var/log/php-fpm
+    chown -R www-data:www-data /var/www/* /var/log/* && \
+    chmod -R 755 /var/www/*
 
 # Copy cpmf + install + script
 COPY conf/www.conf /etc/php/8.2/fpm/pool.d

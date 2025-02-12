@@ -38,8 +38,8 @@ RUN openssl req -x509 -newkey rsa:2048 -nodes \
 COPY ./conf/custom.conf /etc/nginx/conf.d/default.conf
 ## nginx will by default use the config file in conf.d (conf.d dir is copied from the /conf dir by the COPY)
 
-COPY ./tools/index.html /usr/share/nginx/html/index.html
-
+#COPY ./tools/index.html /usr/share/nginx/html/index.html
+# can be used for testing
 
 # port is already defined in docker-compose but leaving it here for clarity
 EXPOSE 443

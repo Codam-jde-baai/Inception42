@@ -143,12 +143,11 @@ Show the users in the mariadb conotainer:
 
   SHOW DATABASES;
 
-  USE database_name
+  select user FROM mysql.user;
 
-  SHOW TABLES;
+  SHOW GRANTS FOR ranuser@'%';
 
-  SELECT * FROM table_name;
-
+  SHOW GRANTS FOR root@'%';
 
   ---------------
 
