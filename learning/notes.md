@@ -139,11 +139,11 @@ Show the users in the mariadb conotainer:
 
   docker exec -it <container_name_or_id> /bin/bash
 
-  mysql -uranuser -p12345
+  mysql -uroot -proot12345
 
   SHOW DATABASES;
 
-  select user FROM mysql.user;
+  select user, Host FROM mysql.user;
 
   SHOW GRANTS FOR ranuser@'%';
 
