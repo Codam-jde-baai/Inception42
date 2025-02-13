@@ -9,7 +9,7 @@ RUN apt-get update -y && \
     wget \
     curl \
     sendmail \
-    apt-get clean
+    && apt-get clean
 
 # Install WP-CLI
 RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar && \

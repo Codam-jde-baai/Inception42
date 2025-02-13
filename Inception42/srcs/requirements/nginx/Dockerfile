@@ -5,7 +5,7 @@ ARG DOMAIN_NAME
 ENV DOMAIN_NAME=$DOMAIN_NAME
 
 RUN apt-get update \
-	&& apt-get install -y openssl nginx net-tools \
+	&& apt-get install -y openssl nginx \
 	&& apt-get clean
 
 ## apt-get update : general update
